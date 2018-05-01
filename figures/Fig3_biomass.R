@@ -1,12 +1,11 @@
-rm(list=ls())
-# setwd('/Users/robins64/Documents/git_repos/beta-catch')
-library(plotrix); library(here)
-source(here('scripts/loads.R'))
 
-pdf(here('figures/final/4_fig_fishhab_variance.pdf'), height=7, width=12)
+library(plotrix) # plotCI function
+library(tidyverse)
+library(itsadug) # emptyPlot function
+library(mgcv) # plot.gam function
 
+### Figure 3 - spatial + temporal variation in fish biomass + benthic composition
 
-### Figure shows spatial variation through time in fish biomass + benthic composition.
 mat<-matrix(c(1,1,1,2,2,2,1,1,1,2,2,2,3,3,4,4,5,5,3,3,4,4,5,5), nrow=4, ncol=6, byrow=T)
 layout(mat)
 par(mar=c(4,4,2,2))
@@ -23,9 +22,13 @@ biom$fam <- plyr::revalue(biom$Species.group,
 
 cols<-c('#66c2a5','#fc8d62','#8da0cb')
 
-with(biom[biom$fam=='Siganid',], boxplot(biom ~ Year, col=cols[1],at=c(1:5), ylim=c(0, 3), xlim=c(0.9, 15), lty=1,boxwex=0.6, axes=F))
-with(biom[biom$fam=='Other herbivores',], boxplot(biom ~ Year, col=cols[2],at=c(6:10), lty=1,boxwex=0.6, add=TRUE, axes=F))
-with(biom[biom$fam=='Lethrinid',], boxplot(biom ~ Year, col=cols[3],at=c(11:15), lty=1,boxwex=0.6, add=TRUE, axes=F))
+with(biom[biom$fam=='Siganid',],
+ 			boxplot(biom ~ Year, col=cols[1],at=c(1:5), ylim=c(0, 3), xlim=c(0.9, 15), lty=1,boxwex=0.6, axes=F))
+with(biom[biom$fam=='Other herbivores',],
+ 			boxplot(biom ~ Year, col=cols[2],at=c(6:10), lty=1,boxwex=0.6, add=TRUE, axes=F))
+with(biom[biom$fam=='Lethrinid',],
+ 			boxplot(biom ~ Year, col=cols[3],at=c(11:15), lty=1,boxwex=0.6, add=TRUE, axes=F))
+
 axis(1, at=c(1:15), labels=rep(c(1994, 2005, 2008, 2011, 2014), times=3), las=1, cex.axis=1)
 axis(2); mtext(2, text=expression(paste('Log'['10'],'(biomass + 1) kg ha'^'-1')), line=2, cex=0.8)
 abline(v=5.5, lty=2, col='grey'); abline(v=10.5, lty=2, col='grey')
@@ -36,9 +39,9 @@ legend('topright', legend=c('Siganid', 'Mixed species', 'Lethrinid'),
 
 
 ## Panel B = fish and benthic PCoA
-load(here('data/results/benthos/benthic_fish_dispersion.Rdata'))
+load('benthic_fish_dispersion.Rdata')
 
-# par(mar=c(5,5,4,2))
+
 emptyPlot(c(0.3,2.5), c(0.8, 2.4), 
            xlab='', 
           ylab="", axes=F)
@@ -59,15 +62,14 @@ text(d.ben$mean+0.05, d.ben$fish.mean-0.05, label=yrs, col=cols, font=2, cex=0.8
 add_label(0.01, 0.05, 'b', cex=1.4, font=2)
 
 ## Fish - habitat - c, d ,e
-# load top models
-load(here('data/results/models/UVC_biom_GAMs.Rdata'))
+# load top GAMs
+load('UVC_biom_GAMs.Rdata')
 
 ## load biomass estimates
-biom<-read.csv(here('data/results/biomass/UVC_temporal_meanbiom_CASgroups.csv'))
-regions<-plyr::ldply(strsplit(as.character(biom$Location), '\ '))
-biom$region<-factor(with(regions, paste(V1, V2, sep='\ ')))
-biom <- biom %>% filter(Year != '2017') %>% mutate(logbiom=log10(biom + 1))
-head(biom[biom$macroalgae>50,],20)
+biom<-read.csv('UVC_temporal_meanbiom_CASgroups.csv')
+biom <- biom %>% mutate(logbiom=log10(biom + 1))
+
+
 # plotting info 
 par(mar=c(4,4,2,1))
 cols<-c('#66c2a5','#fc8d62','#8da0cb')
@@ -89,6 +91,8 @@ sc<-seq(min(biom$complexity), max(biom$complexity), 0.5)
 
 focal.cap<-biom %>% filter(Species.group=='Capitaine')
 focal.cap$pch<-ifelse(focal.cap$state=='Shifted', 16, 17)
+
+## extract partial residual information for plotting, for each species group
 
 a<-plot(cord.gam, select=3, residuals = T, col=cols[1], xlab='', ylab='',ylim=c(-1.5, 2),
 	shade=T,shade.col=alpha(cols[1],0.2), cex=0.0001,pch=16, lwd=2, axes=F)
@@ -127,6 +131,3 @@ legend('topright', legend=c(1994, 2005, 2008, 2011, 2014),
 axis(1, at=seq(min(scaled.ma), max(scaled.ma), length.out=4), labels=ma)
 axis(2, at = seq(-2.5, 1.1, 0.3))
 mtext(1, text='Macroalgal cover (%)', line=2.5, cex=0.8)
-
-
-dev.off()

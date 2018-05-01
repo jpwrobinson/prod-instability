@@ -1,7 +1,11 @@
-rm(list=ls())
-setwd('/Users/robins64/Documents/git_repos/beta-catch')
-library(dplyr); library(ggplot2); library(itsadug); library(stringr)
-## Plotting yields and effort for sharing with coauthors
+
+library(tidyverse) ## data tidying
+library(itsadug) ## emptyPlot and plot_error functions
+
+
+## Fig 2 - temporal trends in CV CPUE 
+
+## From Sean Anderson http://seananderson.ca/
 add_label <- function(xfrac, yfrac, label, pos = 4, ...){
   u <- par("usr")
   x <- u[1] + xfrac * (u[2] - u[1])
@@ -13,8 +17,9 @@ threshold=5
 cols<-c('#66c2a5','#fc8d62','#8da0cb')
 
 
-load(file='data/cleaned/CAS_landings_targets_trapCPUE.Rdata')
-## subset to predictor dataframes
+load(file='CAS_landings_targets_trapCPUE.Rdata')
+
+## subset to predictor dataframe
 cpue <- cpue %>% ungroup() %>% filter(
           ISLAND != 'La Digue' &
           # CAS.name != 'Job' &
@@ -29,37 +34,37 @@ cpue <- cpue %>% ungroup() %>% filter(
     summarise(cpue=sd(cpue)/mean(cpue)*100) %>% 
     group_by(CAS.name, year, ISLAND, stratum, month, DATE.ym, dmi, benso, nboats) %>% 
     summarise(cpue=mean(cpue)) %>% 
-    # filter(!is.na(cpue) & cpue > 0) %>%
     arrange(DATE.ym)
 
 
 # # load predictions
-y1<-read.csv('data/results/predicted/cvcpue/5CATCH/Cordonier_FIXS_cvCPUE.csv')
+
+## stratum trends
+y1<-read.csv('Cordonier_FIXS_cvCPUE.csv')
 y1$ISLAND<-cpue$ISLAND[match(y1$stratum, cpue$stratum)]
 y1$col<-ifelse(y1$ISLAND=='Mahe', '#addd8e', '#238443')
 
-y2<-read.csv('data/results/predicted/cvcpue/5CATCH/Other trap fish_FIXS_cvCPUE.csv')
+y2<-read.csv('Other trap fish_FIXS_cvCPUE.csv')
 y2$ISLAND<-cpue$ISLAND[match(y2$stratum, cpue$stratum)]
 y2$col<-ifelse(y2$ISLAND=='Mahe', '#fdae6b', '#d94801')
 
-y3<-read.csv('data/results/predicted/cvcpue/5CATCH/Capitaine_FIXS_cvCPUE.csv')
+y3<-read.csv('Capitaine_FIXS_cvCPUE.csv')
 y3$ISLAND<-cpue$ISLAND[match(y3$stratum, cpue$stratum)]
 y3$col<-ifelse(y3$ISLAND=='Mahe', '#bcbddc', '#6a51a3')
 
-y1.global<-read.csv('data/results/predicted/cvcpue/5CATCH/Cordonier_FIXS_cvCPUE_globalpred.csv')
-y2.global<-read.csv('data/results/predicted/cvcpue/5CATCH/Other trap fish_FIXS_cvCPUE_globalpred.csv')
-y3.global<-read.csv('data/results/predicted/cvcpue/5CATCH/Capitaine_FIXS_cvCPUE_globalpred.csv')
+## mean trends
+y1.global<-read.csv('Cordonier_FIXS_cvCPUE_globalpred.csv')
+y2.global<-read.csv('Other trap fish_FIXS_cvCPUE_globalpred.csv')
+y3.global<-read.csv('Capitaine_FIXS_cvCPUE_globalpred.csv')
 
-pdf(file='figures/final/3_fig_cvcpue.pdf', height=6, width=4)
 
 ## plotting info
-# col.vec<-c('#d73027','#f46d43','#fdae61','#fee08b','#a6d96a','#1a9850')
 cols<-c('#66c2a5','#fc8d62','#8da0cb')
-
 mat<-matrix(c(1,2,3), nrow=3, byrow=T)
 layout(mat)
 
 par(oma = c(0.5,0,0,0), mgp=c(3,0.6,0))
+
 
 par(mar=c(2,4,0.5,2), xpd=TRUE)
 ## SIGANID - FIXED
@@ -100,9 +105,7 @@ legend('topright', legend=c('Mah\uE9', 'Praslin', 'Mean'), ncol=3,inset=c(0, -0.
   lty=1, lwd=c(1,1,3), col=c('#addd8e', '#238443', cols[1]), cex=0.9, bty='n')
 
 
-
 # MIXED - FIXED
-# par(mar=c(3,2,1,1))
 focal.sp='Other trap fish'
 focal <- cpue %>% filter(CAS.name==focal.sp)
 focal$time <- scale(as.numeric(focal$DATE.ym))
@@ -147,7 +150,6 @@ focal <- cpue %>% filter(CAS.name==focal.sp)
 focal$time <- scale(as.numeric(focal$DATE.ym))
 focal<-droplevels(focal)
 
-
 times <- as.Date(y3.global$time.raw)
 
 emptyPlot(range(as.numeric(times.base)), c(50, 100), 
@@ -174,6 +176,3 @@ for(su in 1:length(strat)){
 legend('topright', legend=c('Mah\uE9', 'Praslin', 'Mean'), ncol=3,inset=c(0, -0.07),
   lty=1, lwd=c(1,1,3), col=c( '#bcbddc', '#6a51a3', cols[3]), cex=0.9, bty='n')
 
-
-
-dev.off()
