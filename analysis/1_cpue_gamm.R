@@ -1,7 +1,7 @@
 #!/bin/env Rscript
 
 
-#Read in site from command line argument
+#Read in species and gear from command line argument
 args <- commandArgs(trailingOnly = TRUE)
 focal.sp<-args[1] ## is target group name
 focal.gear<-args[2] ## is focal gear (fixed or active trap)
@@ -51,7 +51,7 @@ cpue <- cpue %>% ungroup() %>% filter(
 
 ### Examining temporal patterns in CPUE
 ## Response = cpue (kg/trap or kg/set/hour)
-## Fixed = Year, month, DMI, ENSO, boat effort
+## Fixed = Year, month, DMI, ENSO, fleet size
 ## Random = time by landings stratum
 
 ## scale data for modelling
@@ -72,7 +72,7 @@ for (i in 1:length(knots))   {
                 s(month, bs='cc', k=12) +  ## cyclic month term
                 s(dmi, bs='cr', k=knots[i]) + ## cyclic dipole mode index term
                 s(benso, bs='cr', k=knots[i]) + ## enso cyclic term
-                s(nboats, bs = 'cr', k=knots[i]) + ## total boat effort term
+                s(nboats, bs = 'cr', k=knots[i]) + ## total fleet size term
                 s(time, stratum,  k=knots[i], bs = "fs", m=1), ## smoothed random trends per strata
                 data = focal, method='REML', family='Gamma')
 

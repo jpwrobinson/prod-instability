@@ -1,6 +1,6 @@
 #!/bin/env Rscript
 
-#Read in site from command line argument
+#Read in species and gear from command line argument
 args <- commandArgs(trailingOnly = TRUE)
 focal.sp<-args[1] ## is target group name
 threshold<-as.numeric(args[2])  ## is 5 or 10 landings per species per stratum per month
