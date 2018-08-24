@@ -10,8 +10,7 @@ install.packages(c("tidyverse", "mgcv", "itsadug", "scales"))
 *R scripts demonstrate the models fitted to each variable in each main figure, but are not reproducible because datasets could not be provided openly*. 
 
 
-
-**[analysis/](https://github.com/jpwrobinson/prod-instability/tree/master/analysis)** 
+R scripts for **[analyses:](https://github.com/jpwrobinson/prod-instability/tree/master/analysis)** 
 
 CPUE GAM structures in [1_cpue_gamm.R](analysis/1_cpue_gamm.R) 		
 
@@ -30,8 +29,7 @@ Bootstrap simulation for CPUE lower and upper thresholds in [7_cpue_threshold_an
 General function for scaling and centering covariates before fitting GAMs in [scaling_function.R](analysis/scaling_function.R)
 
 
-
-**[figures/](https://github.com/jpwrobinson/prod-instability/tree/master/figures)**
+R scripts for **[figures:](https://github.com/jpwrobinson/prod-instability/tree/master/figures)**
 
 [Fig1_CPUE.R](figures/Fig1_CPUE.R)
 
@@ -40,8 +38,7 @@ General function for scaling and centering covariates before fitting GAMs in [sc
 [Fig3_biomass.R](figures/Fig3_biomass.R)
 
 
-
-**[model-predictions/](https://github.com/jpwrobinson/prod-instability/tree/master/model-predictions)**
+**[Model predictions](https://github.com/jpwrobinson/prod-instability/tree/master/model-predictions)** underlying results:
 
 Model predictions underlying figures and results. Following folders contain csv (fishery catches) and Rdata (UVC models) files. 
 
