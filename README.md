@@ -27,7 +27,7 @@ install.packages(c("tidyverse", "mgcv", "itsadug", "scales"))
 * [Fig3_catches.R](figures/Fig3_catches.R)
 * [Fig4_biomass.R](figures/Fig4_biomass.R)
 
-#### **[Model predictions](https://github.com/jpwrobinson/prod-instability/tree/master/model-predictions)** underlying results:
+#### **[Model predictions:](https://github.com/jpwrobinson/prod-instability/tree/master/model-predictions)**
 
 Model predictions underlying figures and results. Following folders contain csv (fishery catches) and Rdata (UVC models) files. 
 
