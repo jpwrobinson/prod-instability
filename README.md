@@ -1,5 +1,5 @@
 # prod-instability
-R code and data accompanying **Productive instability of coral reef fisheries after climate-driven regime shifts**. *In review.*
+R code and data accompanying **Productive instability of coral reef fisheries after climate-driven regime shifts**. *In press*
 
 The following R packages were used to analyse data and create figures.
 
